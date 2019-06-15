@@ -1,10 +1,6 @@
 import os
-import getpass
 import xmltodict
 from datetime import datetime
-
-# Get User
-USERNAME = getpass.getuser()
 
 # Get the current date
 now = datetime.now()
@@ -14,27 +10,38 @@ MONTH = now.month
 YEAR = now.year
 
 # Folder path
-DIR = 'C:\\Users\\{}\\Desktop\\arquivos_XML\\XML'.format(USERNAME)
 # Open output file
 OUTPUT = open('./saida/xml_{}_{}_{}.txt'.format(DAY, MONTH, YEAR), 'w')
 
-for root, dirs, files in os.walk(DIR):
-    for filename in files:
+for root, dirs, files in os.walk('./xml'):
 
+    for filename in files:
         with open('./XML/'+filename, 'rb') as arq:
             doc = xmltodict.parse(arq)
+            print(filename)
+            products = doc["nfeProc"]["NFe"]['infNFe']['det']
 
-            products = doc["nfeProc"]["NFe"]['infNFe']['det']['prod']
-            for prod in products:
-                prodName = prod['xProd']
-                prodQuant = prod['qCom'].replace('.', ',')
-                prodValue = prod['vProd'].replace('.', ',')
+            print(type(products))
+            
+            if(not type(products) is list):
+                prodName = products['prod']['xProd']
+                prodQuant = products['prod']['qCom'].replace('.', ',')
+                prodValue = products['prod']['vProd'].replace('.', ',')
 
                 # Write on file
                 OUTPUT.write('{};{};{}\n'.format(prodName, prodQuant, prodValue))
                 print('Nome:{}, Quant:{}, Valor:{}'.format(prodName, prodQuant, prodValue))
+            else:
+                for prod in products:
+                    prodName = prod['prod']['xProd']
+                    prodQuant = prod['prod']['qCom'].replace('.', ',')
+                    prodValue = prod['prod']['vProd'].replace('.', ',')
+
+                    # Write on file
+                    OUTPUT.write('{};{};{}\n'.format(prodName, prodQuant, prodValue))
+                    print('Nome:{}, Quant:{}, Valor:{}'.format(prodName, prodQuant, prodValue))
 
         # Delete file
-        os.remove('./XML/'+filename)
+        #os.remove('./XML/'+filename)
 
 OUTPUT.close()
