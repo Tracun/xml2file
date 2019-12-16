@@ -11,7 +11,8 @@ YEAR = now.year
 
 # Folder path
 # Open output file
-OUTPUT = open('./saida/xml_{}_{}_{}.txt'.format(DAY, MONTH, YEAR), 'w')
+OUTPUT = open('C:\\Users\\55119\\Documents\\Automation Anywhere Files\\TaskBots\\NotaFiscal\\Arquivos TXT\\xml_{}_{}_{}.txt'.format(DAY, MONTH, YEAR), 'w')
+countItems = 0
 
 for root, dirs, files in os.walk('./xml'):
 
@@ -24,22 +25,47 @@ for root, dirs, files in os.walk('./xml'):
             print(type(products))
             
             if(not type(products) is list):
+                prodCode = products['prod']['cProd']
                 prodName = products['prod']['xProd']
+                prodNCM = products['prod']['NCM']
                 prodQuant = products['prod']['qCom'].replace('.', ',')
-                prodValue = products['prod']['vProd'].replace('.', ',')
+                prodValue = products['prod']['vUnCom']
+                prodTotalOrto = products['prod']['vProd']
+                prodLote = products[countItems]['infAdProd']
+                prodTotal = float(prodQuant) * float(prodValue)
+                prodUnidCom = products['prod']['uCom']
+                prodUnidTrib = products['prod']['uTrib']
+                
+                prodQuant = prodQuant.replace('.', ',')
+                prodValue = prodValue.replace('.', ',')
+                prodTotal = str(prodTotal).replace('.', ',')
+                prodTotalOrto = str(prodTotalOrto).replace('.', ',')
 
                 # Write on file
-                OUTPUT.write('{};{};{}\n'.format(prodName, prodQuant, prodValue))
-                print('Nome:{}, Quant:{}, Valor:{}'.format(prodName, prodQuant, prodValue))
+                OUTPUT.write('{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}|{}\n'.format(prodCode, prodName, prodNCM, prodQuant, prodValue, prodTotal, prodTotalOrto, prodLote, prodUnidCom, prodUnidTrib))
+                print('Codigo:{}, Nome:{}, NCM:{}, Quant:{}, Valor:{}, Valor total:{}, Valor Total Orto:{}, lote:{}'.format(prodCode, prodName, prodNCM, prodQuant, prodValue, prodTotal, prodTotalOrto, prodLote))
             else:
                 for prod in products:
+                    prodCode = prod['prod']['cProd']
                     prodName = prod['prod']['xProd']
-                    prodQuant = prod['prod']['qCom'].replace('.', ',')
-                    prodValue = prod['prod']['vProd'].replace('.', ',')
+                    prodNCM = prod['prod']['NCM']
+                    prodQuant = prod['prod']['qCom']
+                    prodValue = prod['prod']['vUnCom']
+                    prodTotalOrto = prod['prod']['vProd']
+                    prodLote = products[countItems]['infAdProd']
+                    prodTotal = float(prodQuant) * float(prodValue)
+                    prodUnidCom = prod['prod']['uCom']
+                    prodUnidTrib = prod['prod']['uTrib']
+                    
+                    prodQuant = prodQuant.replace('.', ',')
+                    prodValue = prodValue.replace('.', ',')
+                    prodTotal = str(prodTotal).replace('.', ',')
+                    prodTotalOrto = str(prodTotalOrto).replace('.', ',')
 
                     # Write on file
-                    OUTPUT.write('{};{};{}\n'.format(prodName, prodQuant, prodValue))
-                    print('Nome:{}, Quant:{}, Valor:{}'.format(prodName, prodQuant, prodValue))
+                    OUTPUT.write('{}|{}|{}|{}|{}|{}|{}|{}|{}|{}\n'.format(prodCode, prodName, prodNCM, prodQuant, prodValue, prodTotal, prodTotalOrto, prodLote, prodUnidCom, prodUnidTrib))
+                    print('Codigo:{}, Nome:{}, NCM:{}, Quant:{}, Valor:{}, Valor Total:{}, Valor Total Orto:{}, lote:{}'.format(prodCode, prodName, prodNCM, prodQuant, prodValue, prodTotal, prodTotalOrto, prodLote))
+                    countItems += 1
 
         # Delete file
         #os.remove('./XML/'+filename)
